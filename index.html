@@ -12,16 +12,37 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #0A0A08;
+    background: #000000;
   }
 
   #plan-image {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center center;
   }
 </style>
 
 <img id="plan-image" src="plan.svg?v=2" alt="Site plan">
+
+<script>
+  // pan the plan left/right with arrow keys (object-fit:cover crops the sides,
+  // so this lets you shift which part is visible); Space or Home resets to center.
+  let panX = 50;
+  const planImage = document.getElementById('plan-image');
+  const PAN_STEP = 3;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      panX = Math.max(0, panX - PAN_STEP);
+      planImage.style.objectPosition = `${panX}% center`;
+    } else if (e.key === 'ArrowRight') {
+      panX = Math.min(100, panX + PAN_STEP);
+      planImage.style.objectPosition = `${panX}% center`;
+    } else if (e.key === 'Home' || e.key === ' ') {
+      panX = 50;
+      planImage.style.objectPosition = `${panX}% center`;
+    }
+  });
+</script>
