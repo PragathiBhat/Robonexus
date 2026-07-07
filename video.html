@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>ROBONEXUS — Video Display</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Iceland&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<style>
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000000;
+  }
+
+  #video-stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #player {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+  }
+
+  #idle-message {
+    font-family: 'Iceland', 'Agency FB', 'Bahnschrift', 'Consolas', sans-serif;
+    color: #FFFFFF;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    font-size: clamp(20px, 4vh, 42px);
+    letter-spacing: 0.25em;
+    text-align: center;
+    padding: 0 5%;
+  }
+
+  #status {
+    position: fixed;
+    left: 1.2%;
+    bottom: 1.2%;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: monospace;
+    font-size: clamp(9px, 1.3vh, 14px);
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.05em;
+    z-index: 20;
+  }
+
+  #status .dot {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: #FF3B3B;
+    box-shadow: 0 0 6px rgba(255, 59, 59, 0.8);
+  }
+
+  #status.connected .dot {
+    background: #09BD27;
+    box-shadow: 0 0 6px rgba(9, 189, 39, 0.8);
+  }
+
+  #enable-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    cursor: pointer;
+    font-family: 'Iceland', 'Agency FB', 'Bahnschrift', 'Consolas', sans-serif;
+    color: #FFFFFF;
+    font-size: clamp(18px, 3.5vh, 34px);
+    letter-spacing: 0.2em;
+    text-align: center;
+    padding: 0 5%;
+  }
+</style>
+</head>
+<body>
+
+<div id="video-stage">
+  <video id="player" playsinline></video>
+  <div id="idle-message">WAITING FOR MARKER SELECTION&hellip;</div>
+</div>
+
+<div id="status"><span class="dot"></span><span id="status-text">connecting&hellip;</span></div>
+
+<div id="enable-overlay">CLICK ANYWHERE TO ENABLE VIDEO PLAYBACK</div>
+
+<script>
+  // Marker id -> video file. Edit this to point at your actual video files;
+  // by default it expects videos/marker-<id>.mp4 for markers 0 through 5
+  // (matching the six location markers on the map page).
+  const MARKER_VIDEOS = {
+    0: 'videos/marker-0.mp4',
+    1: 'videos/marker-1.mp4',
+    2: 'videos/marker-2.mp4',
+    3: 'videos/marker-3.mp4',
+    4: 'videos/marker-4.mp4',
+    5: 'videos/marker-5.mp4',
+  };
+
+  const player = document.getElementById('player');
+  const idleMessage = document.getElementById('idle-message');
+  const statusEl = document.getElementById('status');
+  const statusText = document.getElementById('status-text');
+  const enableOverlay = document.getElementById('enable-overlay');
+
+  // Browsers block autoplay-with-sound until the page has had a user
+  // gesture. One click anywhere arms it for the rest of the session, so
+  // videos triggered later from the map device can play with sound.
+  let armed = false;
+  enableOverlay.addEventListener('click', () => {
+    armed = true;
+    enableOverlay.style.display = 'none';
+  });
+
+  function playMarkerVideo(markerId) {
+    const src = MARKER_VIDEOS[markerId];
+    if (!src) {
+      console.warn('No video mapped for marker', markerId);
+      return;
+    }
+    idleMessage.style.display = 'none';
+    player.style.display = 'block';
+    if (player.getAttribute('data-src') !== src) {
+      player.setAttribute('data-src', src);
+      player.src = src;
+    } else {
+      player.currentTime = 0;
+    }
+    player.play().catch((err) => {
+      console.warn('Playback blocked (click the page once to enable audio):', err);
+      enableOverlay.style.display = 'flex';
+    });
+  }
+
+  // Same Firebase Realtime Database project as index.html -- both pages
+  // just read/write one shared value, so they sync from anywhere with
+  // internet access, no shared network or server required.
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfE0RK4fY1A4zemKQSwl8G3KI1AcHTk_c",
+    authDomain: "robonexus-22d2e.firebaseapp.com",
+    databaseURL: "https://robonexus-22d2e-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "robonexus-22d2e",
+    storageBucket: "robonexus-22d2e.firebasestorage.app",
+    messagingSenderId: "596614791257",
+    appId: "1:596614791257:web:59604dd5fc89a440f13148",
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function connect() {
+    // Firebase's special .info/connected path reports this client's actual
+    // live connection state to the database.
+    db.ref('.info/connected').on('value', (snap) => {
+      if (snap.val() === true) {
+        statusEl.classList.add('connected');
+        statusText.textContent = 'connected';
+      } else {
+        statusEl.classList.remove('connected');
+        statusText.textContent = 'disconnected -- retrying…';
+      }
+    });
+
+    let first = true;
+    db.ref('activeMarker').on('value', (snap) => {
+      if (first) { first = false; return; } // skip whatever was last left over
+      const data = snap.val();
+      if (data && data.marker !== undefined) playMarkerVideo(String(data.marker));
+    });
+  }
+
+  connect();
+</script>
+
+</body>
+</html>

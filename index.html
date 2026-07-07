@@ -4,6 +4,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Iceland&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
   * {
     box-sizing: border-box;
@@ -4016,6 +4018,31 @@
   // and direction arrow are otherwise dimmed) -- the SVG is now inlined directly
   // into this document, so we can reach its elements via document/planImage
   // directly instead of through a contentDocument.
+  // Notifies a companion "video display" page (see video.html) when a
+  // marker is clicked, via a shared Firebase Realtime Database value --
+  // works from any two devices with internet access, no shared network or
+  // server of our own required. The timestamp guarantees every click is a
+  // distinct write (so clicking the same marker twice in a row still fires
+  // a fresh update on the video page), and the try/catch means marker
+  // selection still works locally even if Firebase is unreachable.
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfE0RK4fY1A4zemKQSwl8G3KI1AcHTk_c",
+    authDomain: "robonexus-22d2e.firebaseapp.com",
+    databaseURL: "https://robonexus-22d2e-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "robonexus-22d2e",
+    storageBucket: "robonexus-22d2e.firebasestorage.app",
+    messagingSenderId: "596614791257",
+    appId: "1:596614791257:web:59604dd5fc89a440f13148",
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function triggerMarkerVideo(markerId) {
+    db.ref('activeMarker').set({ marker: markerId, ts: Date.now() }).catch((err) => {
+      console.warn('Could not reach the video-sync database:', err);
+    });
+  }
+
   function initMarkerSelection() {
     const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
     style.textContent = `
@@ -4053,6 +4080,7 @@
           marker.classList.add('selected');
           if (arrow) arrow.classList.add('selected');
           if (label) label.classList.add('selected');
+          triggerMarkerVideo(id);
         }
       });
 
