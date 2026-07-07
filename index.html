@@ -4064,41 +4064,81 @@
   // both are moving, with the one heading home never yielding (it must clear
   // the area, same as the reference project's "returning" robots).
   const ROBOT_ROUTES = [[[29.45,13.45],[27.45,13.45],[25.45,13.45],[23.9,13.45],[23.45,13.0],[23.45,11.45],[23.45,9.9],[23.0,9.45],[21.45,9.45],[19.45,9.45],[17.45,9.45],[15.45,9.45],[13.45,9.45],[11.45,9.45],[9.45,9.45],[7.45,9.45],[5.45,9.45],[3.9,9.45],[3.45,9.0],[3.45,7.45],[3.45,5.45],[3.45,3.45],[3.45,5.45],[3.45,7.45],[3.45,9.0],[3.9,9.45],[5.45,9.45],[7.45,9.45],[9.45,9.45],[11.45,9.45],[13.45,9.45],[15.45,9.45],[17.45,9.45],[19.45,9.45],[21.45,9.45],[23.0,9.45],[23.45,9.9],[23.45,11.45],[23.45,13.0],[23.9,13.45],[25.45,13.45],[27.45,13.45],[29.45,13.45]],[[71.45,7.45],[73.45,7.45],[75.45,7.45],[77.45,7.45],[79.45,7.45],[81.45,7.45],[83.0,7.45],[83.45,7.0],[83.45,5.45],[83.45,3.45],[83.45,5.45],[83.45,7.0],[83.0,7.45],[81.45,7.45],[79.45,7.45],[77.45,7.45],[75.45,7.45],[73.45,7.45],[71.45,7.45]],[[13.45,7.45],[11.45,7.45],[9.45,7.45],[7.45,7.45],[5.45,7.45],[3.9,7.45],[3.45,7.0],[3.45,5.45],[3.45,3.45],[3.45,5.45],[3.45,7.0],[3.9,7.45],[5.45,7.45],[7.45,7.45],[9.45,7.45],[11.45,7.45],[13.45,7.45]],[[21.45,7.45],[19.45,7.45],[17.45,7.45],[15.45,7.45],[13.45,7.45],[11.45,7.45],[9.45,7.45],[7.45,7.45],[5.45,7.45],[3.9,7.45],[3.45,7.9],[3.45,9.45],[3.45,11.45],[3.45,13.45],[3.45,11.45],[3.45,9.45],[3.45,7.9],[3.9,7.45],[5.45,7.45],[7.45,7.45],[9.45,7.45],[11.45,7.45],[13.45,7.45],[15.45,7.45],[17.45,7.45],[19.45,7.45],[21.45,7.45]],[[33.45,3.45],[33.45,7.45],[31.45,7.45],[31.45,11.45],[33.45,11.45],[33.45,19.45],[31.45,19.45],[31.45,23.45],[33.45,23.45],[33.45,27.45],[33.45,23.45],[31.45,23.45],[31.45,19.45],[33.45,19.45],[33.45,11.45],[31.45,11.45],[31.45,7.45],[33.45,7.45],[33.45,3.45]],[[59.45,21.45],[57.45,21.45],[55.45,21.45],[53.45,21.45],[51.45,21.45],[49.45,21.45],[47.45,21.45],[45.45,21.45],[43.45,21.45],[41.45,21.45],[39.45,21.45],[37.45,21.45],[35.45,21.45],[33.45,21.45],[31.45,21.45],[29.45,21.45],[27.45,21.45],[25.45,21.45],[23.45,21.45],[21.45,21.45],[19.45,21.45],[21.45,21.45],[23.45,21.45],[25.45,21.45],[27.45,21.45],[29.45,21.45],[31.45,21.45],[33.45,21.45],[35.45,21.45],[37.45,21.45],[39.45,21.45],[41.45,21.45],[43.45,21.45],[45.45,21.45],[47.45,21.45],[49.45,21.45],[51.45,21.45],[53.45,21.45],[55.45,21.45],[57.45,21.45],[59.45,21.45]],[[63.45,7.45],[65.45,7.45],[67.45,7.45],[69.45,7.45],[71.45,7.45],[73.45,7.45],[75.45,7.45],[77.45,7.45],[79.45,7.45],[81.45,7.45],[83.0,7.45],[83.45,7.9],[83.45,9.45],[83.45,11.45],[83.45,13.45],[83.45,11.45],[83.45,9.45],[83.45,7.9],[83.0,7.45],[81.45,7.45],[79.45,7.45],[77.45,7.45],[75.45,7.45],[73.45,7.45],[71.45,7.45],[69.45,7.45],[67.45,7.45],[65.45,7.45],[63.45,7.45]],[[23.45,11.45],[23.45,9.9],[23.0,9.45],[21.45,9.45],[19.45,9.45],[17.45,9.45],[15.45,9.45],[13.45,9.45],[11.45,9.45],[9.45,9.45],[7.45,9.45],[5.45,9.45],[3.9,9.45],[3.45,9.0],[3.45,7.45],[3.45,5.45],[3.45,3.45],[3.45,5.45],[3.45,7.45],[3.45,9.0],[3.9,9.45],[5.45,9.45],[7.45,9.45],[9.45,9.45],[11.45,9.45],[13.45,9.45],[15.45,9.45],[17.45,9.45],[19.45,9.45],[21.45,9.45],[23.0,9.45],[23.45,9.9],[23.45,11.45]],[[57.45,13.45],[59.45,13.45],[61.45,13.45],[63.0,13.45],[63.45,13.0],[63.45,11.45],[63.45,9.9],[63.9,9.45],[65.45,9.45],[67.45,9.45],[69.45,9.45],[71.45,9.45],[73.45,9.45],[75.45,9.45],[77.45,9.45],[79.45,9.45],[81.45,9.45],[83.0,9.45],[83.45,9.9],[83.45,11.45],[83.45,13.45],[83.45,11.45],[83.45,9.9],[83.0,9.45],[81.45,9.45],[79.45,9.45],[77.45,9.45],[75.45,9.45],[73.45,9.45],[71.45,9.45],[69.45,9.45],[67.45,9.45],[65.45,9.45],[63.9,9.45],[63.45,9.9],[63.45,11.45],[63.45,13.0],[63.0,13.45],[61.45,13.45],[59.45,13.45],[57.45,13.45]],[[53.45,3.45],[53.45,7.45],[55.45,7.45],[55.45,11.45],[53.45,11.45],[53.45,19.45],[55.45,19.45],[55.45,23.45],[53.45,23.45],[53.45,27.45],[53.45,23.45],[55.45,23.45],[55.45,19.45],[53.45,19.45],[53.45,11.45],[55.45,11.45],[55.45,7.45],[53.45,7.45],[53.45,3.45]],[[51.45,25.45],[49.9,25.45],[49.45,25.0],[49.45,23.45],[49.45,21.9],[49.0,21.45],[47.45,21.45],[45.45,21.45],[43.45,21.45],[41.45,21.45],[39.45,21.45],[37.45,21.45],[35.45,21.45],[33.45,21.45],[31.45,21.45],[29.45,21.45],[27.45,21.45],[25.45,21.45],[23.45,21.45],[21.45,21.45],[19.45,21.45],[17.9,21.45],[17.45,21.0],[17.45,19.45],[17.45,21.0],[17.9,21.45],[19.45,21.45],[21.45,21.45],[23.45,21.45],[25.45,21.45],[27.45,21.45],[29.45,21.45],[31.45,21.45],[33.45,21.45],[35.45,21.45],[37.45,21.45],[39.45,21.45],[41.45,21.45],[43.45,21.45],[45.45,21.45],[47.45,21.45],[49.0,21.45],[49.45,21.9],[49.45,23.45],[49.45,25.0],[49.9,25.45],[51.45,25.45]],[[17.45,7.45],[15.45,7.45],[13.45,7.45],[11.45,7.45],[9.45,7.45],[7.45,7.45],[5.45,7.45],[3.9,7.45],[3.45,7.9],[3.45,9.45],[3.45,11.45],[3.45,13.45],[3.45,11.45],[3.45,9.45],[3.45,7.9],[3.9,7.45],[5.45,7.45],[7.45,7.45],[9.45,7.45],[11.45,7.45],[13.45,7.45],[15.45,7.45],[17.45,7.45]],[[67.45,21.45],[65.45,21.45],[63.45,21.45],[61.45,21.45],[59.45,21.45],[57.45,21.45],[55.45,21.45],[53.45,21.45],[51.45,21.45],[49.45,21.45],[47.45,21.45],[45.45,21.45],[43.45,21.45],[41.45,21.45],[39.45,21.45],[37.45,21.45],[35.45,21.45],[33.45,21.45],[31.45,21.45],[29.45,21.45],[27.45,21.45],[29.45,21.45],[31.45,21.45],[33.45,21.45],[35.45,21.45],[37.45,21.45],[39.45,21.45],[41.45,21.45],[43.45,21.45],[45.45,21.45],[47.45,21.45],[49.45,21.45],[51.45,21.45],[53.45,21.45],[55.45,21.45],[57.45,21.45],[59.45,21.45],[61.45,21.45],[63.45,21.45],[65.45,21.45],[67.45,21.45]],[[67.45,9.45],[69.45,9.45],[71.45,9.45],[73.45,9.45],[75.45,9.45],[77.45,9.45],[79.45,9.45],[81.45,9.45],[83.0,9.45],[83.45,9.9],[83.45,11.45],[83.45,13.45],[83.45,11.45],[83.45,9.9],[83.0,9.45],[81.45,9.45],[79.45,9.45],[77.45,9.45],[75.45,9.45],[73.45,9.45],[71.45,9.45],[69.45,9.45],[67.45,9.45]],[[61.45,13.45],[63.0,13.45],[63.45,13.0],[63.45,11.45],[63.45,9.9],[63.9,9.45],[65.45,9.45],[67.45,9.45],[69.45,9.45],[71.45,9.45],[73.45,9.45],[75.45,9.45],[77.45,9.45],[79.45,9.45],[81.45,9.45],[83.0,9.45],[83.45,9.0],[83.45,7.45],[83.45,5.45],[83.45,3.45],[83.45,5.45],[83.45,7.45],[83.45,9.0],[83.0,9.45],[81.45,9.45],[79.45,9.45],[77.45,9.45],[75.45,9.45],[73.45,9.45],[71.45,9.45],[69.45,9.45],[67.45,9.45],[65.45,9.45],[63.9,9.45],[63.45,9.9],[63.45,11.45],[63.45,13.0],[63.0,13.45],[61.45,13.45]]];
-  const COLLISION_RADIUS = 2.8;
+  // Grid-cell occupancy map: guarantees strict no-overlap movement. Each
+  // route above is a closed loop (home -> destination -> home) that still
+  // carries leftover fractional "sub-points" (e.g. 23.9, 13.0) from an old
+  // SMIL arc-rounding pass -- cosmetic corner curves, not real grid cells --
+  // so they're filtered out here before anything touches the occupancy map.
+  const GRID_SPACING = 2;
+  const GRID_OFFSET = 1.45;
+  const GRID_SNAP_TOL = 0.15;
 
-  function buildRouteData(pts) {
-    const cum = [0];
-    for (let i = 1; i < pts.length; i++) {
-      const dx = pts[i][0]-pts[i-1][0], dy = pts[i][1]-pts[i-1][1];
-      cum.push(cum[i-1] + Math.hypot(dx, dy));
+  function snapToGrid(v) {
+    return Math.round((v - GRID_OFFSET) / GRID_SPACING) * GRID_SPACING + GRID_OFFSET;
+  }
+
+  function isOnGrid(x, y) {
+    return Math.abs(x - snapToGrid(x)) < GRID_SNAP_TOL && Math.abs(y - snapToGrid(y)) < GRID_SNAP_TOL;
+  }
+
+  // Rebuild each route as a chain of single-grid-cell hops. The raw data has
+  // two artifacts left over from an old SMIL arc-rounding pass: (1) real
+  // corners were replaced by a diagonal jump between the two straight
+  // segments' on-grid endpoints (the actual right-angle corner point got
+  // dropped), and (2) some straight stretches were recorded as one long
+  // multi-cell jump instead of every intermediate grid point. Both would
+  // let a hop's rendered path cut through a cell that was never claimed in
+  // the occupancy map, so both are repaired here before anything else runs.
+  function cleanRoute(pts) {
+    const onGridIdx = [];
+    for (let i = 0; i < pts.length; i++) {
+      if (isOnGrid(pts[i][0], pts[i][1])) onGridIdx.push(i);
     }
-    const total = cum[cum.length-1];
-    const midIdx = (pts.length-1)/2;
-    return { pts, cum, total, destDist: cum[midIdx] };
+    const snap2 = (p) => [Math.round(snapToGrid(p[0])*100)/100, Math.round(snapToGrid(p[1])*100)/100];
+    const out = [snap2(pts[onGridIdx[0]])];
+    for (let k = 1; k < onGridIdx.length; k++) {
+      const A = out[out.length - 1];
+      const B = snap2(pts[onGridIdx[k]]);
+      const dx = B[0]-A[0], dy = B[1]-A[1];
+      if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) continue;
+      if (Math.abs(dx) > 0.01 && Math.abs(dy) > 0.01) {
+        // Diagonal gap -- an arc-rounded corner. The first raw sub-point
+        // between A and B reveals which axis moves first: whichever of its
+        // coordinates is still close to A's is the one that hasn't started
+        // changing yet, so the corner keeps that coordinate from A and
+        // takes the other from B.
+        const between = pts.slice(onGridIdx[k-1]+1, onGridIdx[k]);
+        let corner;
+        if (between.length) {
+          const sub = between[0];
+          const dax = Math.abs(sub[0]-A[0]), day = Math.abs(sub[1]-A[1]);
+          corner = day < dax ? [B[0], A[1]] : [A[0], B[1]];
+        } else {
+          corner = [B[0], A[1]];
+        }
+        out.push(corner);
+        out.push(B);
+      } else if (Math.abs(dx) > 2.01 || Math.abs(dy) > 2.01) {
+        // Straight multi-cell run -- densify to one hop per grid cell.
+        const n = Math.round(Math.max(Math.abs(dx), Math.abs(dy)) / GRID_SPACING);
+        for (let s = 1; s <= n; s++) {
+          out.push([Math.round((A[0] + dx*s/n)*100)/100, Math.round((A[1] + dy*s/n)*100)/100]);
+        }
+      } else {
+        out.push(B);
+      }
+    }
+    return out;
   }
 
-  function sampleRoute(route, dist) {
-    dist = Math.max(0, Math.min(route.total, dist));
-    const { pts, cum } = route;
-    let i = 1;
-    while (i < cum.length - 1 && cum[i] < dist) i++;
-    const i0 = i - 1;
-    const d0 = cum[i0], d1 = cum[i];
-    const segLen = d1 - d0;
-    const t = segLen > 1e-6 ? (dist - d0) / segLen : 0;
-    const p0 = pts[i0], p1 = pts[i];
-    const x = p0[0] + (p1[0]-p0[0]) * t;
-    const y = p0[1] + (p1[1]-p0[1]) * t;
-    const angle = Math.atan2(p1[1]-p0[1], p1[0]-p0[0]) * 180 / Math.PI;
-    return { x, y, angle };
+  function cellKey(p) {
+    return p[0].toFixed(2) + ',' + p[1].toFixed(2);
   }
 
-  // Motion profile borrowed from the reference repo's AnimationController:
-  // segments run on an eased 0->1 "leg progress" (easeInOutCubic, so each
-  // trip accelerates away from a stop and decelerates into the next one)
-  // rather than raw constant speed, pauses at each end are short and snappy
-  // (its grabbing/releasing are 0.5s), and the return trip runs faster than
-  // the outbound one (its returning=1.6s vs moving_to_*=2.0s -> 1.25x).
+  // Segments run on an eased 0->1 "hop progress" (easeInOutCubic, so each
+  // single grid-to-grid hop accelerates away from a stop and decelerates
+  // into the next one) rather than raw constant speed, so movement still
+  // reads as smooth even though it's built from discrete cell-to-cell hops.
   function easeInOutCubic(t) {
     return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
   }
@@ -4109,30 +4149,36 @@
   const PAUSE_HOME_MIN = 0.4;
   const PAUSE_HOME_JITTER = 0.5;   // small stagger so robots don't lock-step
 
+  // occupied[cellKey] = robot index currently holding that cell. A cell is
+  // claimed the instant a robot starts hopping INTO it and released only
+  // once that hop animation is fully complete -- so two robots can never
+  // share a cell, even mid-transition.
+  const occupied = Object.create(null);
+
   function initRobotEngine() {
     const robotEls = Array.from(document.querySelectorAll('.robot'))
       .sort((a, b) => (+a.getAttribute('data-robot-index')) - (+b.getAttribute('data-robot-index')));
 
-    const robots = ROBOT_ROUTES.map((pts, i) => {
-      const route = buildRouteData(pts);
-      const outDur  = route.destDist / BASE_SPEED;
-      const backDur = (route.total - route.destDist) / (BASE_SPEED * RETURN_SPEED_MULT);
+    const robots = ROBOT_ROUTES.map((rawPts, i) => {
+      const pts = cleanRoute(rawPts);
+      const midIdx = (pts.length - 1) / 2;
+      occupied[cellKey(pts[0])] = i;
       return {
-        route,
+        pts,
+        midIdx,
+        lastIdx: pts.length - 1,
         el: robotEls[i],
-        dist: 0,           // current distance along the there-and-back route
-        legT: 0,            // 0..1 normalized progress within the current leg
-        legDuration: outDur,
-        outDur, backDur,
-        dir: 1,
-        state: 'idle_home',
+        idx: 0,              // index of the cell this robot currently occupies
+        targetIdx: 0,         // index of the cell being hopped into
+        leg: 'outbound',
+        phase: 'idle_home',   // idle_home | idle_dest | waiting | hopping
         idleTimer: 0.4 + Math.random() * 2.0,
         homePause: PAUSE_HOME_MIN + Math.random() * PAUSE_HOME_JITTER,
         destPause: PAUSE_DEST,
+        hopT: 0,
+        hopDuration: 0,
+        backing: false,
         heading: null,
-        stuckTime: 0,   // seconds continuously paused for collision -- forces
-                        // through past STUCK_TIMEOUT so mutual-yield deadlocks
-                        // between robots can never freeze the scene forever
       };
     });
 
@@ -4149,100 +4195,145 @@
       requestAnimationFrame(frame);
     }
 
+    // Try to claim the next cell along the route and start hopping into it.
+    // If that cell is already held by another robot, park in 'waiting' --
+    // no partial move gets rendered -- and retry on every following frame
+    // until the holder releases it.
+    function tryStartHop(r, i) {
+      const nextIdx = r.idx + 1;
+      const from = r.pts[r.idx], to = r.pts[nextIdx];
+      const key = cellKey(to);
+      const holder = occupied[key];
+      if (holder !== undefined && holder !== i) {
+        r.phase = 'waiting';
+        // In a single-lane dead-end corridor, several robots can end up
+        // packed nose-to-tail with the one at the front unable to turn
+        // around -- with strict occupancy none of them could ever release,
+        // so they'd wait on each other forever. If the robot blocking us is
+        // itself just parked waiting (not actively driving off on its own),
+        // ask it to push back one cell to make room; it cascades the same
+        // request through anyone idling behind it too.
+        const holderRobot = robots[holder];
+        if (holderRobot.phase === 'waiting') pushBack(holderRobot, holder, 0);
+        return false;
+      }
+      occupied[key] = i;
+      r.targetIdx = nextIdx;
+      r.hopT = 0;
+      const dist = Math.hypot(to[0]-from[0], to[1]-from[1]);
+      const speed = r.leg === 'outbound' ? BASE_SPEED : BASE_SPEED * RETURN_SPEED_MULT;
+      r.hopDuration = Math.max(0.05, dist / speed);
+      r.phase = 'hopping';
+      return true;
+    }
+
+    const PUSH_BACK_MAX_DEPTH = 8;
+
+    // Ask a parked robot to retreat one cell so someone behind it can pass.
+    // If the cell behind IT is also held by another idle robot, recurse into
+    // that one FIRST without moving anyone at this level -- a hop takes real
+    // time to complete, so only the innermost robot that has genuinely free
+    // space behind it can actually start moving right now. Everyone else in
+    // the chain just keeps waiting and will find their own cell freed (and
+    // retreat in turn) on a later frame, once the robot behind them actually
+    // finishes vacating it. Never interrupts a robot that's actively hopping
+    // under its own steam.
+    function pushBack(r, i, depth) {
+      if (depth > PUSH_BACK_MAX_DEPTH || r.idx <= 0) return false;
+      const backIdx = r.idx - 1;
+      const to = r.pts[backIdx];
+      const key = cellKey(to);
+      const holder = occupied[key];
+      if (holder !== undefined && holder !== i) {
+        const other = robots[holder];
+        if (other.phase !== 'waiting') return false;
+        return pushBack(other, holder, depth + 1);
+      }
+      const from = r.pts[r.idx];
+      occupied[key] = i;
+      r.targetIdx = backIdx;
+      r.hopT = 0;
+      const dist = Math.hypot(to[0]-from[0], to[1]-from[1]);
+      const speed = r.leg === 'outbound' ? BASE_SPEED : BASE_SPEED * RETURN_SPEED_MULT;
+      r.hopDuration = Math.max(0.05, dist / speed);
+      r.phase = 'hopping';
+      r.backing = true;
+      return true;
+    }
+
     function stepSimulation(ts) {
       if (lastTs === null) lastTs = ts;
       const dt = Math.min(0.05, (ts - lastTs) / 1000);
       lastTs = ts;
 
-      for (const r of robots) {
-        if (r.state === 'idle_home' || r.state === 'idle_dest') {
-          r.idleTimer -= dt;
-          if (r.idleTimer <= 0) {
-            r.dir = r.state === 'idle_home' ? 1 : -1;
-            r.legT = 0;
-            r.legDuration = r.dir === 1 ? r.outDur : r.backDur;
-            r.state = 'moving';
-          }
-        }
-      }
-
-      // distFor(r, legT) -- eased distance-along-route for a given leg progress,
-      // without mutating the robot (used both to render and to look ahead).
-      function distFor(r, legT) {
-        const eased = easeInOutCubic(Math.max(0, Math.min(1, legT)));
-        return r.dir === 1
-          ? r.route.destDist * eased
-          : r.route.destDist + (r.route.total - r.route.destDist) * eased;
-      }
-
-      // Priority: a robot heading home (dir -1) always wins and is never paused
-      // (it must clear the area). A moving robot yields to a robot that is
-      // currently idle/parked. Between two moving robots of equal priority,
-      // we don't tie-break by array index (that let a trailing robot keep
-      // closing in on one that had already stopped, producing an overlapping
-      // "conga line"). Instead we check who is actually CLOSING the gap --
-      // only a robot whose own movement would shrink the distance gets
-      // paused; if both are closing (head-on), both pause.
-      function priority(r) {
-        if (r.state !== 'moving') return 3;       // parked -- highest, never yields
-        return r.dir === -1 ? 2 : 1;               // returning home > outbound
-      }
-
-      function isClosing(mover, otherPos) {
-        const cur  = sampleRoute(mover.route, distFor(mover, mover.legT));
-        const next = sampleRoute(mover.route, distFor(mover, mover.legT + dt * 3 / mover.legDuration));
-        const d0 = Math.hypot(cur.x - otherPos.x, cur.y - otherPos.y);
-        const d1 = Math.hypot(next.x - otherPos.x, next.y - otherPos.y);
-        return d1 < d0 - 1e-6;
-      }
-
-      const positions = robots.map((r) => sampleRoute(r.route, distFor(r, r.legT)));
-      const paused = new Array(robots.length).fill(false);
-      for (let i = 0; i < robots.length; i++) {
-        for (let j = i + 1; j < robots.length; j++) {
-          if (robots[i].state !== 'moving' && robots[j].state !== 'moving') continue;
-          const dx = positions[i].x - positions[j].x;
-          const dy = positions[i].y - positions[j].y;
-          if (dx*dx + dy*dy < COLLISION_RADIUS*COLLISION_RADIUS) {
-            const pi = priority(robots[i]);
-            const pj = priority(robots[j]);
-            if (pi < pj) { if (robots[i].state === 'moving') paused[i] = true; continue; }
-            if (pj < pi) { if (robots[j].state === 'moving') paused[j] = true; continue; }
-            // equal priority: pause whichever one(s) are closing the gap
-            if (robots[i].state === 'moving' && isClosing(robots[i], positions[j])) paused[i] = true;
-            if (robots[j].state === 'moving' && isClosing(robots[j], positions[i])) paused[j] = true;
-          }
-        }
-      }
-
-      const STUCK_TIMEOUT = 3.0; // seconds -- after this, force through regardless of yielding
-
+      // Fixed index order every tick -> deterministic queuing, no jitter or
+      // flicker between candidates contending for the same cell.
       for (let i = 0; i < robots.length; i++) {
         const r = robots[i];
-        if (r.state !== 'moving') continue;
-        if (paused[i]) {
-          r.stuckTime += dt;
-          if (r.stuckTime < STUCK_TIMEOUT) continue;
-          // Timed out waiting -- proceed anyway so a mutual-yield deadlock
-          // between two or more robots can never freeze the scene forever.
-        } else {
-          r.stuckTime = 0;
+
+        if (r.phase === 'idle_home' || r.phase === 'idle_dest') {
+          r.idleTimer -= dt;
+          if (r.idleTimer <= 0) {
+            r.leg = r.phase === 'idle_home' ? 'outbound' : 'inbound';
+            tryStartHop(r, i);
+          }
+          continue;
         }
-        r.legT += dt / r.legDuration;
-        if (r.legT >= 1) {
-          r.legT = 1;
-          if (r.dir === 1) {
-            r.state = 'idle_dest';
-            r.idleTimer = r.destPause;
-          } else {
-            r.state = 'idle_home';
-            r.idleTimer = r.homePause;
+
+        if (r.phase === 'waiting') {
+          tryStartHop(r, i);
+          continue;
+        }
+
+        if (r.phase === 'hopping') {
+          r.hopT += dt / r.hopDuration;
+          if (r.hopT >= 1) {
+            r.hopT = 1;
+            // Hop fully complete -- only now release the cell we came from,
+            // so no other robot could ever have claimed it mid-transition.
+            delete occupied[cellKey(r.pts[r.idx])];
+            r.idx = r.targetIdx;
+            if (r.backing) {
+              // Finished retreating -- go back to waiting so the robot
+              // that was deadlocked with us gets a turn to pass, then
+              // retry moving forward again from here.
+              r.backing = false;
+              r.phase = 'waiting';
+            } else if (r.idx === r.midIdx) {
+              r.phase = 'idle_dest';
+              r.idleTimer = r.destPause;
+            } else if (r.idx === r.lastIdx) {
+              // Back home (pts[lastIdx] === pts[0] by value, and the
+              // occupancy key is coordinate-based, so the home cell stays
+              // continuously claimed through this reset).
+              r.idx = 0;
+              r.phase = 'idle_home';
+              r.idleTimer = r.homePause;
+            } else {
+              // Mid-leg: immediately try to claim the next cell so a
+              // multi-hop leg still reads as one continuous, smoothly
+              // eased motion instead of stuttering at every grid line.
+              tryStartHop(r, i);
+            }
           }
         }
       }
 
       for (const r of robots) {
-        const p = sampleRoute(r.route, distFor(r, r.legT));
+        let p;
+        if (r.phase === 'hopping') {
+          const from = r.pts[r.idx], to = r.pts[r.targetIdx];
+          const eased = easeInOutCubic(r.hopT);
+          p = {
+            x: from[0] + (to[0]-from[0]) * eased,
+            y: from[1] + (to[1]-from[1]) * eased,
+            angle: Math.atan2(to[1]-from[1], to[0]-from[0]) * 180 / Math.PI,
+          };
+        } else {
+          // idle or waiting -- stay put, no partial move rendered.
+          const at = r.pts[r.idx];
+          p = { x: at[0], y: at[1], angle: r.heading === null ? 0 : r.heading };
+        }
         if (r.heading === null) r.heading = p.angle;
         let da = ((p.angle - r.heading + 540) % 360) - 180;
         r.heading += da * Math.min(1, dt * 6);
