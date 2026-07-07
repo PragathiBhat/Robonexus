@@ -12,16 +12,38 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #0A0A08;
+    background: #000000;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij4KICA8ZGVmcz4KICAgIDxmaWx0ZXIgaWQ9ImciIHg9Ii0xMDAlIiB5PSItMTAwJSIgd2lkdGg9IjMwMCUiIGhlaWdodD0iMzAwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBpbj0iU291cmNlR3JhcGhpYyIgc3RkRGV2aWF0aW9uPSIxLjgiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz4KICAgICAgPC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsdGVyPSJ1cmwoI2cpIj4KICAgIDxsaW5lIHgxPSIyNCIgeTE9IjEiIHgyPSIyNCIgeTI9IjEzIi8+CiAgICA8bGluZSB4MT0iMjQiIHkxPSIzNSIgeDI9IjI0IiB5Mj0iNDciLz4KICAgIDxsaW5lIHgxPSIxIiB5MT0iMjQiIHgyPSIxMyIgeTI9IjI0Ii8+CiAgICA8bGluZSB4MT0iMzUiIHkxPSIyNCIgeDI9IjQ3IiB5Mj0iMjQiLz4KICAgIDxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjEwLjUiLz4KICA8L2c+CiAgPGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMyIgZmlsbD0iI0ZGRkZGRiIgZmlsdGVyPSJ1cmwoI2cpIi8+Cjwvc3ZnPgo=") 24 24, crosshair;
   }
 
   #plan-image {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center center;
   }
 </style>
 
 <img id="plan-image" src="plan.svg?v=2" alt="Site plan">
+
+<script>
+  // pan the plan left/right with arrow keys (object-fit:cover crops the sides,
+  // so this lets you shift which part is visible); Space or Home resets to center.
+  let panX = 50;
+  const planImage = document.getElementById('plan-image');
+  const PAN_STEP = 3;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      panX = Math.max(0, panX - PAN_STEP);
+      planImage.style.objectPosition = `${panX}% center`;
+    } else if (e.key === 'ArrowRight') {
+      panX = Math.min(100, panX + PAN_STEP);
+      planImage.style.objectPosition = `${panX}% center`;
+    } else if (e.key === 'Home' || e.key === ' ') {
+      panX = 50;
+      planImage.style.objectPosition = `${panX}% center`;
+    }
+  });
+</script>
