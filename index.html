@@ -1,6 +1,9 @@
 <title>ROBONEXUS — Marktplatz Wolfsburg</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Iceland&display=swap" rel="stylesheet">
 <style>
   * {
     box-sizing: border-box;
@@ -13,7 +16,7 @@
     height: 100%;
     overflow: hidden;
     background: #000000;
-    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij4KICA8ZGVmcz4KICAgIDxmaWx0ZXIgaWQ9ImciIHg9Ii0xMDAlIiB5PSItMTAwJSIgd2lkdGg9IjMwMCUiIGhlaWdodD0iMzAwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBpbj0iU291cmNlR3JhcGhpYyIgc3RkRGV2aWF0aW9uPSIxLjgiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz4KICAgICAgPC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsdGVyPSJ1cmwoI2cpIj4KICAgIDxsaW5lIHgxPSIyNCIgeTE9IjEiIHgyPSIyNCIgeTI9IjEzIi8+CiAgICA8bGluZSB4MT0iMjQiIHkxPSIzNSIgeDI9IjI0IiB5Mj0iNDciLz4KICAgIDxsaW5lIHgxPSIxIiB5MT0iMjQiIHgyPSIxMyIgeTI9IjI0Ii8+CiAgICA8bGluZSB4MT0iMzUiIHkxPSIyNCIgeDI9IjQ3IiB5Mj0iMjQiLz4KICAgIDxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjEwLjUiLz4KICA8L2c+CiAgPGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMyIgZmlsbD0iI0ZGRkZGRiIgZmlsdGVyPSJ1cmwoI2cpIi8+Cjwvc3ZnPgo=") 24 24, crosshair;
+    cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij4KICA8ZGVmcz4KICAgIDxmaWx0ZXIgaWQ9ImciIHg9Ii0xMDAlIiB5PSItMTAwJSIgd2lkdGg9IjMwMCUiIGhlaWdodD0iMzAwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBpbj0iU291cmNlR3JhcGhpYyIgc3RkRGV2aWF0aW9uPSIxLjgiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz4KICAgICAgPC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA5RDhDNyIgc3Ryb2tlLXdpZHRoPSIyLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsdGVyPSJ1cmwoI2cpIj4KICAgIDxsaW5lIHgxPSIxOCIgeTE9IjMiIHgyPSIzMCIgeTI9IjMiLz4KICAgIDxsaW5lIHgxPSIyNCIgeTE9IjMiIHgyPSIyNCIgeTI9IjE1Ii8+CiAgICA8bGluZSB4MT0iMTgiIHkxPSI0NSIgeDI9IjMwIiB5Mj0iNDUiLz4KICAgIDxsaW5lIHgxPSIyNCIgeTE9IjMzIiB4Mj0iMjQiIHkyPSI0NSIvPgogICAgPGxpbmUgeDE9IjMiIHkxPSIxOCIgeDI9IjMiIHkyPSIzMCIvPgogICAgPGxpbmUgeDE9IjMiIHkxPSIyNCIgeDI9IjE1IiB5Mj0iMjQiLz4KICAgIDxsaW5lIHgxPSI0NSIgeTE9IjE4IiB4Mj0iNDUiIHkyPSIzMCIvPgogICAgPGxpbmUgeDE9IjMzIiB5MT0iMjQiIHgyPSI0NSIgeTI9IjI0Ii8+CiAgICA8Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSI0LjUiLz4KICA8L2c+Cjwvc3ZnPgo=") 24 24, crosshair;
   }
 
   #plan-image {
@@ -27,26 +30,75 @@
 
   #project-title {
     position: fixed;
-    left: 10.5%;
+    left: 1.5%;
     top: 94.8%;
-    transform: translate(-50%, -50%);
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-weight: bold;
-    font-size: clamp(18px, 4.4vh, 42px);
-    letter-spacing: 0.22em;
+    transform: translateY(-50%);
+    font-family: 'Iceland', 'Agency FB', 'Bahnschrift', 'Consolas', sans-serif;
+    font-weight: 400;
+    font-size: clamp(24px, 6vh, 54px);
+    letter-spacing: 0.3em;
     pointer-events: none;
     z-index: 10;
     white-space: nowrap;
   }
 
-  #project-title .robo {
+  #title-text {
+    position: relative;
+    display: inline-block;
     color: #BD0927;
     text-shadow: 0 0 10px rgba(189, 9, 39, 0.65), 0 0 22px rgba(189, 9, 39, 0.35);
   }
 
-  #project-title .nexus {
+  /* RGB-split glitch layers -- duplicate the text via data-text, shift the
+     color channels apart, and jitter/clip them on an irregular cadence. */
+  #title-text.glitching::before,
+  #title-text.glitching::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  #title-text.glitching::before {
+    color: #09D8C7;
+    animation: glitch-shift-1 3.2s infinite steps(1);
+    clip-path: inset(0 0 0 0);
+  }
+
+  #title-text.glitching::after {
+    color: #FFFFFF;
+    animation: glitch-shift-2 3.7s infinite steps(1);
+    clip-path: inset(0 0 0 0);
+  }
+
+  @keyframes glitch-shift-1 {
+    0%, 92%, 100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); opacity: 0; }
+    93% { transform: translate(-2px, 1px); clip-path: inset(10% 0 60% 0); opacity: 0.8; }
+    95% { transform: translate(2px, -1px); clip-path: inset(55% 0 15% 0); opacity: 0.8; }
+    96% { transform: translate(-1px, 0); clip-path: inset(20% 0 40% 0); opacity: 0.6; }
+    97%, 100.1% { opacity: 0; }
+  }
+
+  @keyframes glitch-shift-2 {
+    0%, 90%, 100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); opacity: 0; }
+    91% { transform: translate(2px, -1px); clip-path: inset(65% 0 5% 0); opacity: 0.7; }
+    93% { transform: translate(-2px, 1px); clip-path: inset(5% 0 70% 0); opacity: 0.7; }
+    94.5% { transform: translate(1px, 0); clip-path: inset(35% 0 30% 0); opacity: 0.5; }
+    96%, 100.1% { opacity: 0; }
+  }
+
+  #title-cursor {
+    display: inline-block;
     color: #BD0927;
     text-shadow: 0 0 10px rgba(189, 9, 39, 0.65), 0 0 22px rgba(189, 9, 39, 0.35);
+    animation: cursor-blink 0.9s steps(1) infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
   }
 
   #legend {
@@ -3889,9 +3941,9 @@
 <g transform="translate(16.45,22.45)"><animateMotion path="M -14.55,0 L 14.55,0 L -14.55,0" dur="14.0s" begin="3.0s" repeatCount="indefinite"/><g transform="translate(-0.691,-7.000)"><use href="#gantrySystem" width="1.381" height="14.000"/></g></g>
 <g transform="translate(43.45,22.45)"><animateMotion path="M -5.55,0 L 5.55,0 L -5.55,0" dur="5.5s" begin="4.0s" repeatCount="indefinite"/><g transform="translate(-0.691,-7.000)"><use href="#gantrySystem" width="1.381" height="14.000"/></g></g>
 <g transform="translate(70.45,22.45)"><animateMotion path="M -14.55,0 L 14.55,0 L -14.55,0" dur="14.0s" begin="5.0s" repeatCount="indefinite"/><g transform="translate(-0.691,-7.000)"><use href="#gantrySystem" width="1.381" height="14.000"/></g></g>
-<g transform="translate(28.448,8.446)"><animateTransform attributeName="transform" attributeType="XML" type="rotate" additive="sum" values="0;-50;-50;50;50;0;0" keyTimes="0.0000;0.2778;0.3472;0.6250;0.6944;0.9167;1.0000" keySplines="0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1" calcMode="spline" dur="7.20s" repeatCount="indefinite"/><g transform="translate(-1.8,-0.76)"><use href="#kukaRobot" width="3.6" height="1.519"/></g></g><g transform="translate(58.448,8.446)"><animateTransform attributeName="transform" attributeType="XML" type="rotate" additive="sum" values="0;-50;-50;50;50;0;0" keyTimes="0.0000;0.2778;0.3472;0.6250;0.6944;0.9167;1.0000" keySplines="0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1" calcMode="spline" dur="7.20s" begin="0.6s" repeatCount="indefinite"/><g transform="translate(-1.8,-0.76)"><use href="#kukaRobot" width="3.6" height="1.519"/></g></g>
+<g transform="translate(28.448,8.446)"><animateTransform attributeName="transform" attributeType="XML" type="rotate" additive="sum" values="0;-50;-50;50;50;0;0" keyTimes="0.0000;0.2778;0.3472;0.6250;0.6944;0.9167;1.0000" keySplines="0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1" calcMode="spline" dur="7.20s" repeatCount="indefinite"/><g transform="translate(-1.8,-0.76)"><use href="#kukaRobot" width="3.6" height="1.519"/></g></g><g transform="translate(58.448,8.446)"><animateTransform attributeName="transform" attributeType="XML" type="rotate" additive="sum" values="0;50;50;-50;-50;0;0" keyTimes="0.0000;0.2778;0.3472;0.6250;0.6944;0.9167;1.0000" keySplines="0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1;0.65 0 0.35 1;0 0 1 1" calcMode="spline" dur="7.20s" begin="0.6s" repeatCount="indefinite"/><g transform="translate(-1.8,-0.76)"><use href="#kukaRobot" width="3.6" height="1.519"/></g></g>
 </svg>
-<div id="project-title"><span class="robo">ROBO</span><span class="nexus">NEXUS</span></div>
+<div id="project-title"><span id="title-text" data-text=""></span><span id="title-cursor">|</span></div>
 <div id="legend">
   <span class="legend-item stalls-item"><span class="swatch"></span>MARKET STALLS</span>
   <span class="legend-item event-item"><span class="swatch"></span>EVENT SPACE</span>
@@ -3951,7 +4003,7 @@
   function initMarkerSelection() {
     const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
     style.textContent = `
-      .location-marker { cursor: pointer; }
+      .location-marker { cursor: inherit; }
       .location-marker.selected,
       .direction-arrow.selected *,
       .scenario-label.selected,
@@ -4003,4 +4055,38 @@
   }
 
   initMarkerSelection();
+
+  // Type the title out one character at a time with a blinking cursor, then
+  // let the glitch layers (defined in CSS, keyed off data-text) start once
+  // the full word is on screen.
+  function initTitleTypewriter() {
+    const TEXT = 'ROBONEXUS';
+    const textEl = document.getElementById('title-text');
+    const HOLD_MS = 4500;   // how long to sit fully typed (glitching) before retyping
+    const RESTART_DELAY_MS = 500;
+
+    function eraseThenRetype() {
+      textEl.classList.remove('glitching');
+      textEl.textContent = '';
+      textEl.setAttribute('data-text', '');
+      setTimeout(typeNext.bind(null, 0), RESTART_DELAY_MS);
+    }
+
+    function typeNext(i) {
+      i++;
+      const shown = TEXT.slice(0, i);
+      textEl.textContent = shown;
+      textEl.setAttribute('data-text', shown);
+      if (i < TEXT.length) {
+        setTimeout(() => typeNext(i), 110 + Math.random() * 90);
+      } else {
+        textEl.classList.add('glitching');
+        setTimeout(eraseThenRetype, HOLD_MS);
+      }
+    }
+
+    setTimeout(() => typeNext(0), 300);
+  }
+
+  initTitleTypewriter();
 </script>
