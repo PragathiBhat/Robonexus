@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86.90 33.39">
   <defs>
+    <pattern id="eventHatch" patternUnits="userSpaceOnUse" width="0.5" height="0.5" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="0.5" stroke="#09D8C7" stroke-width="0.035" stroke-opacity="0.55"/>
+    </pattern>
     <symbol id="kukaRobot" viewBox="0 0 2369.3 1000.0">
 <polyline points="819.28,240.24 819.25,242.17" fill="none" stroke="#BD0927" stroke-width="4.74"/>
 <polyline points="818.31,292.05 818.27,294.24" fill="none" stroke="#BD0927" stroke-width="4.74"/>
@@ -3281,8 +3284,8 @@
 <rect x="39.448" y="25.446" width="8.000" height="2.000" fill="#09D8C7" fill-opacity="0.22" stroke="none"/>
 <rect x="39.448" y="17.446" width="8.000" height="2.000" fill="#09D8C7" fill-opacity="0.22" stroke="none"/>
 <rect x="75.448" y="11.446" width="6.000" height="2.000" fill="#09D8C7" fill-opacity="0.22" stroke="none"/>
-<rect x="25.448" y="5.446" width="6.000" height="6.000" fill="#411E3A" fill-opacity="0.55" stroke="none"/>
-<rect x="55.448" y="5.446" width="6.000" height="6.000" fill="#411E3A" fill-opacity="0.55" stroke="none"/>
+<rect x="25.448" y="5.446" width="6.000" height="6.000" fill="url(#eventHatch)" stroke="#BD0927" stroke-width="0.06" stroke-opacity="0.7"/>
+<rect x="55.448" y="5.446" width="6.000" height="6.000" fill="url(#eventHatch)" stroke="#BD0927" stroke-width="0.06" stroke-opacity="0.7"/>
 <polygon points="5.448,27.446 15.448,27.446 15.448,25.446 7.448,25.446 7.448,17.446 5.448,17.446" fill="#09D8C7" fill-opacity="0.22" stroke="none"/>
 <polygon points="71.448,27.446 81.448,27.446 81.448,17.446 79.448,17.446 79.448,25.446 71.448,25.446" fill="#09D8C7" fill-opacity="0.22" stroke="none"/>
 <polyline points="47.450,13.350 47.450,9.450" fill="none" stroke="#09D8C7" stroke-width="0.07" stroke-linecap="round"/>
