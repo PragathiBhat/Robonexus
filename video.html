@@ -102,16 +102,16 @@
 <div id="enable-overlay">CLICK ANYWHERE TO ENABLE VIDEO PLAYBACK</div>
 
 <script>
-  // Marker id -> video file. Edit this to point at your actual video files;
-  // by default it expects videos/marker-<id>.mp4 for markers 0 through 5
-  // (matching the six location markers on the map page).
+  // Marker id -> video file, hosted as GitHub Release assets (the actual
+  // .mp4 files are too large to commit into the repo itself). To swap in
+  // new videos, upload a new release and update these URLs to match.
   const MARKER_VIDEOS = {
-    0: 'videos/marker-0.mp4',
-    1: 'videos/marker-1.mp4',
-    2: 'videos/marker-2.mp4',
-    3: 'videos/marker-3.mp4',
-    4: 'videos/marker-4.mp4',
-    5: 'videos/marker-5.mp4',
+    0: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-0.mp4',
+    1: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-1.mp4',
+    2: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-2.mp4',
+    3: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-3.mp4',
+    4: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-4.mp4',
+    5: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-5.mp4',
   };
 
   const player = document.getElementById('player');
