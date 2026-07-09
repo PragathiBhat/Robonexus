@@ -89,6 +89,34 @@
     pointer-events: none;
   }
   #scenario-title.visible { opacity: 1; }
+
+  /* ---------- Shown only when a video's own playback attempt gets blocked
+     by the browser's autoplay policy (typically just the first video, since
+     one click satisfies it for the rest of the session) -- not a persistent
+     upfront overlay, just a clear "why is this frozen" cue when it happens. ---------- */
+  #click-prompt {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+    font-family: 'Iceland', 'Agency FB', 'Bahnschrift', 'Consolas', sans-serif;
+    color: #FFFFFF;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 22px rgba(255, 255, 255, 0.3);
+    font-size: clamp(18px, 3.5vh, 34px);
+    letter-spacing: 0.2em;
+    text-align: center;
+    padding: 0 5%;
+    animation: soundPromptPulse 1.8s ease-in-out infinite;
+  }
+  #click-prompt.visible { display: flex; }
+
+  @keyframes soundPromptPulse {
+    0%, 100% { opacity: 0.75; } 50% { opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -101,6 +129,8 @@
 </div>
 
 <div id="status"><span class="dot"></span><span id="status-text">connecting&hellip;</span></div>
+
+<div id="click-prompt">CLICK ON VIDEO TO START</div>
 
 <script>
   // Marker id -> video file, hosted as GitHub Release assets (the actual
@@ -130,13 +160,20 @@
   const statusEl = document.getElementById('status');
   const statusText = document.getElementById('status-text');
   const scenarioTitle = document.getElementById('scenario-title');
+  const clickPrompt = document.getElementById('click-prompt');
 
   // Browsers block autoplay-with-sound until the page has had a user
-  // gesture. There's no visible prompt for this -- on the actual display
+  // gesture -- typically only the very first video hits this, since one
+  // click satisfies it for the rest of the session. On the actual display
   // device, launch the browser with autoplay unlocked (see
-  // open-video-kiosk.bat) so no click is ever needed. As a silent
-  // fallback (see the .catch below), any incidental click/key on the page
-  // still lets playback retry.
+  // open-video-kiosk.bat) so this never shows at all. Otherwise, this
+  // prompt appears only when a video's own play() attempt actually gets
+  // blocked, so it's never shown before there's something frozen to explain.
+  clickPrompt.addEventListener('click', () => {
+    clickPrompt.classList.remove('visible');
+    player.play().catch(() => {});
+  });
+
   function playMarkerVideo(markerId) {
     const src = MARKER_VIDEOS[markerId];
     if (!src) {
@@ -153,11 +190,11 @@
     } else {
       player.currentTime = 0;
     }
-    player.play().catch((err) => {
-      console.warn('Playback blocked -- will retry on the next click/key, or run via open-video-kiosk.bat to avoid this entirely:', err);
-      const retry = () => { player.play().catch(() => {}); };
-      window.addEventListener('pointerdown', retry, { once: true });
-      window.addEventListener('keydown', retry, { once: true });
+    player.play().then(() => {
+      clickPrompt.classList.remove('visible');
+    }).catch((err) => {
+      console.warn('Playback blocked -- click the video to start it, or run via open-video-kiosk.bat to avoid this entirely:', err);
+      clickPrompt.classList.add('visible');
     });
   }
 
