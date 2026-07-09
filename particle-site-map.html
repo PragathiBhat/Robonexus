@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RoboNexus — Site Plan</title>
+<style>
+  :root{
+    --white:#eaf6ff;
+    --cyan:#6fe9ff;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%; background:#000;
+    font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow:hidden;
+  }
+  #scene-canvas{
+    position:fixed; inset:0; width:100%; height:100%; display:block; z-index:1;
+  }
+  #vignette{
+    position:fixed; inset:0; z-index:4; pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%);
+  }
+  #grain-fade{
+    position:fixed; inset:0; z-index:6; pointer-events:none;
+    background:#000; opacity:1; transition:opacity 2.2s ease;
+  }
+  #grain-fade.hidden{ opacity:0; }
+  #hud{
+    position:fixed; inset:0; z-index:5; pointer-events:none;
+    padding:28px; opacity:0; transition:opacity 1.4s ease;
+  }
+  #hud.visible{ opacity:1; }
+  #hud .label-top{
+    position:absolute; top:34px; left:70px;
+    font-family:'Consolas','SFMono-Regular',monospace; font-size:12px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--cyan); opacity:0.85;
+  }
+  #hud .label-top small{
+    display:block; font-size:10px; color:rgba(234,246,255,0.5); letter-spacing:1px; margin-top:4px;
+  }
+  #hud .particle-readout{
+    position:absolute; bottom:34px; left:70px;
+    font-family:'Consolas',monospace; font-size:11px; letter-spacing:1px;
+    color:rgba(234,246,255,0.6); text-transform:uppercase;
+  }
+  .corner{ position:absolute; width:34px; height:34px; border:1.5px solid rgba(111,233,255,0.4); }
+  .tl{ top:22px; left:22px; border-right:none; border-bottom:none; }
+  .tr{ top:22px; right:22px; border-left:none; border-bottom:none; }
+  .bl{ bottom:22px; left:22px; border-right:none; border-top:none; }
+  .br{ bottom:22px; right:22px; border-left:none; border-top:none; }
+</style>
+</head>
+<body>
+
+<canvas id="scene-canvas"></canvas>
+<div id="vignette"></div>
+<div id="grain-fade"></div>
+
+<div id="hud">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="label-top">SITE PLAN // DIGITAL TWIN
+    <small>Aerial reconstruction · point cloud</small>
+  </div>
+  <div class="particle-readout">Particles: <span id="particleCount">0</span></div>
+  <div id="realisticHint" style="position:absolute; bottom:34px; right:70px; font-family:'Consolas',monospace; font-size:11px; letter-spacing:1px; color:rgba(234,246,255,0.35); text-transform:uppercase;">Press G for realistic render</div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  // ==========================================================================
+  // Config — auto-orbiting camera around the already-formed masterplan
+  // ==========================================================================
+  var ORBIT_SPEED = 0.045;
+  var POINT_SIZE_SCALE = 620; // px-world constant driving on-screen point size (was 260 — bumped so the cloud reads as dense/solid rather than sparse)
+  var ORBIT_RADIUS_MIN = 16, ORBIT_RADIUS_MAX = 26;
+  var ORBIT_RADIUS_PERIOD = 42;
+  var ORBIT_HEIGHT_MIN = 5, ORBIT_HEIGHT_MAX = 12;
+  var ORBIT_HEIGHT_PERIOD = 65;
+  var RESTART_KEY = 'r';
+  var REALISTIC_KEY = 'g';
+  var INTRO_URL = 'index.html';
+  var REALISTIC_URL = 'site-render.html';
+  var DATA_URL = 'site-points.bin'; // Float32, stride 7: tx,ty,tz,r,g,b,size
+
+  var particleData = null, particleCount = 0;
+
+  function buildSite(){
+    return fetch(DATA_URL).then(function(resp){ return resp.arrayBuffer(); }).then(function(buf){
+      particleData = new Float32Array(buf);
+      particleCount = particleData.length / 7;
+      document.getElementById('particleCount').textContent = particleCount.toLocaleString();
+    });
+  }
+
+  // ==========================================================================
+  // Three.js scene — GPU-driven: no per-frame per-particle JS loop, so this
+  // scales to millions of points. Twinkle is computed in the vertex shader
+  // from a position-based hash (deterministic per-point phase/speed).
+  // ==========================================================================
+  var renderer, scene, camera, points, clock;
+
+  function makeSprite(){
+    // elongated comet/streak shape instead of a round dot: bright rounded
+    // head on the right, fading tail toward the left. Orientation gets
+    // rotated per-particle in the fragment shader to match wind direction.
+    var c = document.createElement('canvas');
+    c.width = c.height = 64;
+    var ctx = c.getContext('2d');
+    ctx.save();
+    ctx.translate(32,32);
+    ctx.scale(1, 0.32);
+    ctx.translate(-32,-32);
+    var g = ctx.createLinearGradient(4,32, 58,32);
+    g.addColorStop(0.0,  'rgba(255,255,255,0)');
+    g.addColorStop(0.30, 'rgba(255,255,255,0.35)');
+    g.addColorStop(0.62, 'rgba(255,255,255,0.85)');
+    g.addColorStop(1.0,  'rgba(255,255,255,1)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(32,32,28,28,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+    var tex = new THREE.CanvasTexture(c);
+    tex.generateMipmaps = false;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }
+
+  // On load, particles are still scattered/flying (continuing the look from
+  // the intro page) and then suddenly snap into the masterplan a beat later —
+  // staggered slightly per-particle (via hash) so the snap reads as an
+  // organic pop rather than a robotic jump-cut.
+  var vertexShader = [
+    'attribute float aSize;',
+    'attribute vec3 aColor;',
+    'uniform float uTime;',
+    'varying vec3 vColor;',
+    'varying float vIntensity;',
+    'varying float vStreakAngle;',
+    'varying float vFogDepth;',
+    'float hash13(vec3 p){',
+    '  p = fract(p * 0.3183099 + 0.1);',
+    '  p *= 17.0;',
+    '  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));',
+    '}',
+    'void main(){',
+    '  vColor = aColor;',
+    '  float h = hash13(position.xyz);',
+    '  float hx = hash13(position.xyz + 11.0);',
+    '  float hy = hash13(position.xyz + 23.0);',
+    '  float hz = hash13(position.xyz + 41.0);',
+    '  float phase = h * 6.28318;',
+    '  float phA1 = hx * 6.28318;',
+    '  float phA2 = hy * 6.28318;',
+    '  float speed = 0.5 + h * 1.1;',
+    '  float twinkle = 1.05 + 0.35 * sin(uTime * speed + phase);',
+    '  float scatterAngle = h * 6.28318;',
+    '  float scatterRad = 16.0 + hx * 34.0;',
+    '  vec3 scatterPos = vec3(cos(scatterAngle)*scatterRad, 3.0 + hy * 26.0, sin(scatterAngle)*scatterRad);',
+    '  float flowSpeed1 = 0.35 + hx * 0.55;',
+    '  float flowSpeed2 = 0.28 + hy * 0.5;',
+    '  float flowSpeed3 = 0.4 + hz * 0.55;',
+    '  float flightAmp = 9.0;',
+    '  vec3 flight = vec3(',
+    '    sin(uTime * flowSpeed1 + phA1) * flightAmp + sin(uTime * flowSpeed3 * 0.6 + phA2) * flightAmp * 0.4,',
+    '    cos(uTime * flowSpeed2 * 1.1 + phA2) * flightAmp * 0.6,',
+    '    cos(uTime * flowSpeed1 * 0.8 + phA1 * 1.3) * flightAmp + sin(uTime * flowSpeed3 + phA1) * flightAmp * 0.4',
+    '  );',
+    '  float formDelay = 0.5 + hz * 0.35;',
+    '  float formDur = 0.5 + hx * 0.35;',
+    '  float localT = uTime - formDelay;',
+    '  vec3 basePos;',
+    '  float intensity;',
+    '  if(localT <= 0.0){',
+    '    basePos = scatterPos + flight;',
+    '    intensity = 0.4 + 0.2 * max(0.0, sin(uTime * speed + phase));',
+    '  } else {',
+    '    float tt = clamp(localT / formDur, 0.0, 1.0);',
+    '    float e = 1.0 - pow(1.0 - tt, 3.0);',
+    '    basePos = mix(scatterPos, position, e) + flight * (1.0 - e);',
+    '    intensity = (0.4 + 0.6 * e) * twinkle;',
+    '  }',
+    '  vIntensity = intensity;',
+    '  vec2 windDir = normalize(vec2(1.0, 0.4));',
+    '  vec2 perpDir = vec2(-windDir.y, windDir.x);',
+    '  float gust = 0.6 + 0.4 * sin(uTime * 0.15);',
+    '  float leanAmp = 0.05;',
+    '  float lean = sin(dot(position.xz, windDir) * 0.35 - uTime * 0.6) * leanAmp * gust;',
+    '  float freqA1 = 2.0 + hx * 2.2;',
+    '  float freqA2 = 3.4 + hy * 2.6;',
+    '  float flutterAlong = sin(uTime * freqA1 + phA1) * 0.045 * (0.5 + 0.5 * gust);',
+    '  float flutterAcross = (sin(uTime * freqA2 + phA2) + 0.5 * sin(uTime * freqA2 * 2.1 + phA2 * 1.6)) * 0.075 * (0.5 + 0.5 * gust);',
+    '  float flutterUp = sin(uTime * (freqA1 * 1.3) + phA2) * 0.03 * (0.5 + 0.5 * gust);',
+    '  vec3 windDir3 = vec3(windDir.x, 0.0, windDir.y);',
+    '  vec3 perpDir3 = vec3(perpDir.x, 0.0, perpDir.y);',
+    '  vec3 drift = windDir3 * (lean + flutterAlong) + perpDir3 * flutterAcross + vec3(0.0, flutterUp, 0.0);',
+    '  vec3 driftedPosition = basePos + drift;',
+    '  vec4 mvPosition = modelViewMatrix * vec4(driftedPosition, 1.0);',
+    '  vec3 flutterDir3 = drift;',
+    '  float flutterLen = length(flutterDir3);',
+    '  flutterDir3 = flutterLen > 0.0001 ? flutterDir3 / flutterLen : windDir3;',
+    '  vec4 mvPositionB = modelViewMatrix * vec4(driftedPosition + flutterDir3 * 0.5, 1.0);',
+    '  vec4 clipA = projectionMatrix * mvPosition;',
+    '  vec4 clipB = projectionMatrix * mvPositionB;',
+    '  vec2 ndcA = clipA.xy / clipA.w;',
+    '  vec2 ndcB = clipB.xy / clipB.w;',
+    '  vStreakAngle = atan(ndcB.y - ndcA.y, ndcB.x - ndcA.x);',
+    '  vFogDepth = -mvPosition.z;',
+    '  gl_PointSize = aSize * (' + POINT_SIZE_SCALE.toFixed(1) + ' / -mvPosition.z);',
+    '  gl_Position = projectionMatrix * mvPosition;',
+    '}'
+  ].join('\n');
+
+  var fragmentShader = [
+    'uniform sampler2D uMap;',
+    'uniform float uFogNear;',
+    'uniform float uFogFar;',
+    'varying vec3 vColor;',
+    'varying float vIntensity;',
+    'varying float vStreakAngle;',
+    'varying float vFogDepth;',
+    'void main(){',
+    '  vec2 centered = gl_PointCoord - vec2(0.5);',
+    '  float ca = cos(-vStreakAngle);',
+    '  float sa = sin(-vStreakAngle);',
+    '  vec2 rotated = vec2(ca*centered.x - sa*centered.y, sa*centered.x + ca*centered.y) + vec2(0.5);',
+    '  vec4 tex = texture2D(uMap, rotated);',
+    '  float fogFactor = clamp((vFogDepth - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);',
+    '  float fogDim = 1.0 - fogFactor * 0.88;',
+    '  gl_FragColor = vec4(vColor * vIntensity * fogDim, tex.r * vIntensity * fogDim);',
+    '  gl_FragColor.rgb *= tex.r;',
+    '}'
+  ].join('\n');
+
+  function initScene(){
+    var canvas = document.getElementById('scene-canvas');
+    renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias:true, alpha:false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 1);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+
+    scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x000000, 22, 46); // atmospheric depth fade, drone-haze feel
+    camera = new THREE.PerspectiveCamera(48, window.innerWidth/window.innerHeight, 0.1, 200);
+
+    var interleaved = new THREE.InterleavedBuffer(particleData, 7);
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.InterleavedBufferAttribute(interleaved, 3, 0, false));
+    geo.setAttribute('aColor',   new THREE.InterleavedBufferAttribute(interleaved, 3, 3, false));
+    geo.setAttribute('aSize',    new THREE.InterleavedBufferAttribute(interleaved, 1, 6, false));
+
+    var mat = new THREE.ShaderMaterial({
+      uniforms:{
+        uMap:{ value: makeSprite() },
+        uTime:{ value: 0 },
+        uFogNear:{ value: scene.fog.near },
+        uFogFar:{ value: scene.fog.far }
+      },
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      transparent:true,
+      depthWrite:false,
+      depthTest:true,
+      blending:THREE.AdditiveBlending
+    });
+
+    points = new THREE.Points(geo, mat);
+    scene.add(points);
+
+    clock = new THREE.Clock();
+    window.addEventListener('resize', onResize);
+    window.addEventListener('keydown', onKeyDown);
+
+    document.getElementById('hud').classList.add('visible');
+    requestAnimationFrame(animate);
+    requestAnimationFrame(function(){
+      document.getElementById('grain-fade').classList.add('hidden');
+    });
+  }
+
+  function onResize(){
+    if(!renderer) return;
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function onKeyDown(e){
+    if(e.key.toLowerCase() === RESTART_KEY){ window.location.href = INTRO_URL; }
+    if(e.key.toLowerCase() === REALISTIC_KEY){ window.location.href = REALISTIC_URL; }
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var t = clock.getElapsedTime();
+
+    if(points) points.material.uniforms.uTime.value = t;
+
+    var camAngle = t * ORBIT_SPEED;
+    var radiusPhase = (Math.sin(t * (Math.PI*2/ORBIT_RADIUS_PERIOD)) + 1) / 2;
+    var heightPhase = (Math.sin(t * (Math.PI*2/ORBIT_HEIGHT_PERIOD) + 1.7) + 1) / 2;
+    var camRadius = ORBIT_RADIUS_MIN + (ORBIT_RADIUS_MAX-ORBIT_RADIUS_MIN) * radiusPhase;
+    var camHeight = ORBIT_HEIGHT_MIN + (ORBIT_HEIGHT_MAX-ORBIT_HEIGHT_MIN) * heightPhase;
+
+    // slow drone-like drift on the look-at target + a faint roll, so the
+    // orbit doesn't feel like a mechanical turntable
+    var lookDriftX = Math.sin(t * 0.037) * 1.1;
+    var lookDriftZ = Math.cos(t * 0.029) * 1.1;
+    var roll = Math.sin(t * 0.021) * 0.03;
+
+    camera.position.set(Math.cos(camAngle)*camRadius, camHeight, Math.sin(camAngle)*camRadius);
+    camera.up.set(Math.sin(roll), Math.cos(roll), 0);
+    camera.lookAt(lookDriftX, 0.5, lookDriftZ);
+
+    renderer.render(scene, camera);
+  }
+
+  buildSite().then(initScene);
+})();
+</script>
+
+</body>
+</html>
