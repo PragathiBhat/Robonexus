@@ -72,25 +72,28 @@
     box-shadow: 0 0 6px rgba(9, 189, 39, 0.8);
   }
 
-  #enable-overlay {
+  #scenario-title {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 30;
-    cursor: pointer;
+    top: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
     font-family: 'Iceland', 'Agency FB', 'Bahnschrift', 'Consolas', sans-serif;
     color: #FFFFFF;
-    font-size: clamp(18px, 3.5vh, 34px);
-    letter-spacing: 0.2em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 22px rgba(255, 255, 255, 0.3);
+    font-size: clamp(16px, 3vh, 32px);
+    letter-spacing: 0.3em;
     text-align: center;
-    padding: 0 5%;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
   }
+  #scenario-title.visible { opacity: 1; }
 </style>
 </head>
 <body>
+
+<div id="scenario-title"></div>
 
 <div id="video-stage">
   <video id="player" playsinline></video>
@@ -98,8 +101,6 @@
 </div>
 
 <div id="status"><span class="dot"></span><span id="status-text">connecting&hellip;</span></div>
-
-<div id="enable-overlay">CLICK ANYWHERE TO ENABLE VIDEO PLAYBACK</div>
 
 <script>
   // Marker id -> video file, hosted as GitHub Release assets (the actual
@@ -114,21 +115,28 @@
     5: 'https://github.com/PragathiBhat/Robonexus/releases/download/videos-v1/marker-5.mp4',
   };
 
+  // Matches the scenario-label text on the floor plan's markers.
+  const MARKER_LABELS = {
+    0: 'MARKET SCENARIO 1',
+    1: 'EVENT SCENARIO 1',
+    2: 'EVENT SCENARIO 2',
+    3: 'PLAYSCENARIO 1',
+    4: 'PLAYSCENARIO 2',
+    5: 'MARKET SCENARIO 2',
+  };
+
   const player = document.getElementById('player');
   const idleMessage = document.getElementById('idle-message');
   const statusEl = document.getElementById('status');
   const statusText = document.getElementById('status-text');
-  const enableOverlay = document.getElementById('enable-overlay');
+  const scenarioTitle = document.getElementById('scenario-title');
 
   // Browsers block autoplay-with-sound until the page has had a user
-  // gesture. One click anywhere arms it for the rest of the session, so
-  // videos triggered later from the map device can play with sound.
-  let armed = false;
-  enableOverlay.addEventListener('click', () => {
-    armed = true;
-    enableOverlay.style.display = 'none';
-  });
-
+  // gesture. There's no visible prompt for this -- on the actual display
+  // device, launch the browser with autoplay unlocked (see
+  // open-video-kiosk.bat) so no click is ever needed. As a silent
+  // fallback (see the .catch below), any incidental click/key on the page
+  // still lets playback retry.
   function playMarkerVideo(markerId) {
     const src = MARKER_VIDEOS[markerId];
     if (!src) {
@@ -137,6 +145,8 @@
     }
     idleMessage.style.display = 'none';
     player.style.display = 'block';
+    scenarioTitle.textContent = MARKER_LABELS[markerId] || '';
+    scenarioTitle.classList.add('visible');
     if (player.getAttribute('data-src') !== src) {
       player.setAttribute('data-src', src);
       player.src = src;
@@ -144,8 +154,10 @@
       player.currentTime = 0;
     }
     player.play().catch((err) => {
-      console.warn('Playback blocked (click the page once to enable audio):', err);
-      enableOverlay.style.display = 'flex';
+      console.warn('Playback blocked -- will retry on the next click/key, or run via open-video-kiosk.bat to avoid this entirely:', err);
+      const retry = () => { player.play().catch(() => {}); };
+      window.addEventListener('pointerdown', retry, { once: true });
+      window.addEventListener('keydown', retry, { once: true });
     });
   }
 
