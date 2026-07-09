@@ -4059,6 +4059,12 @@
     });
   }
 
+  // Robots stay parked at their home positions until the first marker click
+  // (see initMarkerSelection) -- stepSimulation checks this and does nothing
+  // at all while it's false, so the floor plan only "comes alive" once a
+  // visitor actually interacts with it.
+  let simulationStarted = false;
+
   function initMarkerSelection() {
     const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
     style.textContent = `
@@ -4090,6 +4096,7 @@
       const label = labels.find((l) => l.getAttribute('data-marker-id') === id);
 
       marker.addEventListener('click', () => {
+        simulationStarted = true;
         const wasSelected = marker.classList.contains('selected');
         clearSelection();
         if (!wasSelected) {
@@ -4336,6 +4343,7 @@
     }
 
     function stepSimulation(ts) {
+      if (!simulationStarted) return;
       if (lastTs === null) lastTs = ts;
       const dt = Math.min(0.05, (ts - lastTs) / 1000);
       lastTs = ts;
