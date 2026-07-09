@@ -4084,25 +4084,6 @@
       labels.forEach((l) => l.classList.remove('selected'));
     }
 
-    // Selects a marker by id, mirroring a real click on it -- shared by the
-    // local click handler below and by remote activation (see
-    // initRemoteMarkerActivation), so a scenario button on the separate
-    // Robonexus marketing site can activate a marker here the same way
-    // clicking it directly would. skipWrite avoids re-writing to Firebase
-    // when the selection itself CAME from Firebase, which would otherwise
-    // loop (write -> triggers listener -> writes again -> ...).
-    function selectMarker(id, skipWrite) {
-      const marker = markers.find((m) => m.getAttribute('data-marker-id') === String(id));
-      if (!marker) return;
-      const arrow = arrows.find((a) => a.getAttribute('data-marker-id') === String(id));
-      const label = labels.find((l) => l.getAttribute('data-marker-id') === String(id));
-      clearSelection();
-      marker.classList.add('selected');
-      if (arrow) arrow.classList.add('selected');
-      if (label) label.classList.add('selected');
-      if (!skipWrite) triggerMarkerVideo(id);
-    }
-
     markers.forEach((marker) => {
       const id = marker.getAttribute('data-marker-id');
       const arrow = arrows.find((a) => a.getAttribute('data-marker-id') === id);
@@ -4110,10 +4091,12 @@
 
       marker.addEventListener('click', () => {
         const wasSelected = marker.classList.contains('selected');
-        if (wasSelected) {
-          clearSelection();
-        } else {
-          selectMarker(id);
+        clearSelection();
+        if (!wasSelected) {
+          marker.classList.add('selected');
+          if (arrow) arrow.classList.add('selected');
+          if (label) label.classList.add('selected');
+          triggerMarkerVideo(id);
         }
       });
 
@@ -4128,22 +4111,6 @@
         if (arrow) arrow.classList.remove('hovered');
         if (label) label.classList.remove('hovered');
       });
-    });
-
-    initRemoteMarkerActivation(selectMarker);
-  }
-
-  // Lets an external page (the separate Robonexus marketing/React site's
-  // Explore page) remotely activate a marker here, over the same Firebase
-  // value our own marker clicks write to -- so a visitor clicking "Market
-  // Scenario 1" there selects that marker here exactly as if they'd
-  // clicked it on the floor plan directly.
-  function initRemoteMarkerActivation(selectMarker) {
-    let first = true;
-    db.ref('activeMarker').on('value', (snap) => {
-      if (first) { first = false; return; } // skip whatever was last left over
-      const data = snap.val();
-      if (data && data.marker !== undefined) selectMarker(data.marker, true);
     });
   }
 
