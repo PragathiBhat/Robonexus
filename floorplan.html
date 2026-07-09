@@ -169,6 +169,20 @@
       transparent 70%, transparent 100%);
     border: none;
   }
+
+  #markerHint {
+    position: fixed;
+    top: 1%;
+    right: 1.5%;
+    font-family: monospace;
+    font-size: clamp(9px, 1.3vh, 15px);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(9, 216, 199, 0.75);
+    pointer-events: none;
+    z-index: 10;
+    white-space: nowrap;
+  }
 </style>
 
 <svg id="plan-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86.90 33.39">
@@ -3969,6 +3983,8 @@
   <span class="legend-item storage-item"><span class="swatch"></span>STORAGE</span>
   <span class="legend-item maze-item"><span class="swatch"></span>MAZE</span>
 </div>
+
+<div id="markerHint">Select a marker to experience a scenario</div>
 
 <script>
   // <object> doesn't size an embedded SVG the same way <img> does with

@@ -70,6 +70,23 @@
     opacity:0; pointer-events:none; transition:opacity 1.2s ease;
   }
   #fadeOverlay.visible{ opacity:1; }
+
+  /* ---------- "Let's start the experience" hand-off screen: shown once the
+     fade-to-black is fully opaque, sitting above it; a deliberate beat
+     between the intro and the floor plan rather than an automatic cut. ---------- */
+  #startPrompt{
+    position:fixed; inset:0; z-index:60;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:22px; text-align:center; padding:0 6%;
+    opacity:0; pointer-events:none; transition:opacity 1s ease;
+  }
+  #startPrompt.visible{ opacity:1; }
+  #startPrompt .headline{
+    font-family:'Iceland','Agency FB','Bahnschrift','Consolas',sans-serif;
+    font-weight:400; letter-spacing:0.28em; text-transform:uppercase;
+    font-size:clamp(24px, 5.2vh, 52px); color:#FFFFFF;
+    text-shadow:0 0 10px rgba(255,255,255,0.65), 0 0 22px rgba(255,255,255,0.35);
+  }
 </style>
 </head>
 <body>
@@ -93,6 +110,10 @@
 <div id="soundPrompt">Click anywhere for sound</div>
 
 <div id="fadeOverlay"></div>
+
+<div id="startPrompt">
+  <div class="headline">Let's Start the Experience</div>
+</div>
 
 <script src="vendor/three.min.js"></script>
 
@@ -990,14 +1011,23 @@
   // ==========================================================================
   // Hand-off to the interactive floor plan, once the voiceover has finished.
   // ==========================================================================
+  var FADE_TO_BLACK_MS = 1300;   // matches #fadeOverlay's 1.2s CSS transition
+  var START_PROMPT_HOLD_MS = 2800; // how long "Let's Start the Experience" stays on screen
+
   var floorplanTriggered = false;
   function goToFloorplan(){
     if(floorplanTriggered) return;
     floorplanTriggered = true;
     document.getElementById('fadeOverlay').classList.add('visible');
+    // Once the fade is fully opaque, hold on a "let's start the experience"
+    // beat, then continue on to the floor plan automatically -- no click
+    // needed, just a paced fade / hold / fade sequence.
     setTimeout(function(){
-      window.location.href = 'floorplan.html';
-    }, 1300);
+      document.getElementById('startPrompt').classList.add('visible');
+      setTimeout(function(){
+        window.location.href = 'floorplan.html';
+      }, START_PROMPT_HOLD_MS);
+    }, FADE_TO_BLACK_MS);
   }
 
   // ==========================================================================
